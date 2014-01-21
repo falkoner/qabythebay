@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	<title>BAY QA</title>
+	<link href="../bootstrap/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+		<h1>Bay QA recent job list</h1>
+			<div class="span14">
+				<table class="table table-striped">
+			        <thead>
+			          <tr>
+			            <th>Summary</th>
+			            <th>Added</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			          <% @items.each do |item| %>
+			          <tr>
+			            <td><a href=<%= item[:link] %> ><%= item[:title] %> </a></td>
+			            <td><%= item[:date] %></td>
+			          </tr>
+		          <% end %>
+		        </tbody>
+		      </table>
+		      <a class='btn btn-primary' href='/prev/<%= (@first_item - @@step).to_s %>'>Prev</a> |
+		      <a class='btn btn-primary' href='/next/<%= (@@step + @first_item).to_s %>'>Next</a>
+	      </div>
+	</div>
+
+
+</body>
+</html>

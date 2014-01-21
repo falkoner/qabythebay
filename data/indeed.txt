@@ -1,0 +1,3 @@
+ttp://www.indeed.com/jobs?q=test%2C+QA%2C+QE&l=Santa+Clara%2C+CA&radius=50
+
+http://rss.indeed.com/rss?q=test%2C+QA%2C+QE&l=Santa+Clara%2C+CA&radius=50

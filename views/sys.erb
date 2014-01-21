@@ -1,0 +1,13 @@
+<html>
+<head>
+	<title>BAY QA</title>
+</head>
+<body>
+	<h1>DB connection details</h1>
+	<ul>
+		<% @db.each do |item| %>
+			<li> <%= item %> </li>
+		<% end %>
+	</ul>
+</body>
+</html>

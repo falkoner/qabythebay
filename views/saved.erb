@@ -1,0 +1,24 @@
+<div class="container">
+	<h1>Bay QA recent jobs list</h1>
+		<div class="span14">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Summary</th>
+						<th>Added</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @items.each do |item| %>
+					<tr>
+						<td><a href=<%= item["link"] %> ><%= item["title"] %> </a></td>
+						<td><%= (item["dc_date"] + Time.zone_offset("PST")).strftime("%F %T")%></td>
+					</tr>
+				<% end %>
+				</tbody>
+      </table>
+      <a class='btn btn-primary' href='/<%= (@current > 0? @current - 1 : 0 ).to_s %>'>Next</a> |
+      <span class='label'>Page <%=@current + 1%></span> |
+      <a class='btn btn-primary' href='/<%= (@current + 1).to_s %>'>Prev</a>
+    </div>
+</div>
