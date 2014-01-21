@@ -18,7 +18,7 @@ module Sinatra
         db_heroku = URI.parse(ENV['MONGOHQ_URL'])
         database = db_heroku.path.gsub(/^\//, '')
         db = Mongo::Connection.new(db_heroku.host, db_heroku.port).db(database)
-        db.authenticate(db_heroku.username, db_heroku.password) unless (db_heroku.username.nil? || db_heroku.password.nil?)
+        db.authenticate(db_heroku.user, db_heroku.password) unless (db_heroku.user.nil? || db_heroku.password.nil?)
       end
 
       return db
