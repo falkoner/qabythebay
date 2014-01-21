@@ -35,12 +35,16 @@ module Sinatra
       end
 
       def process
-        rss = SimpleRSS.parse open(@url)
-        rss.channel.items.each do |item|
-          if check(item.title)
-            save(item) if @db
-            @new_items.push :title => item.title, :link => item.link
+        begin
+          rss = SimpleRSS.parse open(@url)
+          rss.channel.items.each do |item|
+            if check(item.title)
+              save(item) if @db
+              @new_items.push :title => item.title, :link => item.link
+            end
           end
+        rescue Exception => e
+          puts e.message
         end
       end
 
