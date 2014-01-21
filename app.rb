@@ -1,10 +1,10 @@
 require 'rufus-scheduler'
-require 'sinatra'
+require "sinatra"
+require "sinatra/reloader" if development?
 require 'yaml'
 require './helpers.rb'
 require 'mongo'
 require 'json'
-require "sinatra/reloader" if development?
 
 include Mongo
 include Sinatra::UserHelper
