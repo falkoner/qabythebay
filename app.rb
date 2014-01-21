@@ -18,7 +18,7 @@ parser = Sinatra::UserHelper::RssParser.new(items, counters)
 # set up scheduler
 scheduler = Rufus::Scheduler.new
 
-scheduler.every("5m") do
+scheduler.every("10m") do
   puts Time.now.to_s + " Processing RSS"
   parser.process
 end
