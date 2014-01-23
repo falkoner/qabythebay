@@ -16,12 +16,12 @@ counters = db.collection('counters')
 parser = Sinatra::UserHelper::RssParser.new(items, counters)
 
 # set up scheduler
-scheduler = Rufus::Scheduler.new
+# scheduler = Rufus::Scheduler.new
 
-scheduler.every("10m") do
-  puts Time.now.to_s + " Processing RSS"
-  parser.process
-end
+# scheduler.every("10m") do
+#   puts Time.now.to_s + " Processing RSS"
+#   parser.process
+# end
 
 puts "We are starting"
 
