@@ -23,7 +23,7 @@ function drawChart() {
   var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
   var options = {
     title: "Number of QA job postings per day",
-    legend: "none"
+    legend: "bottom"
   };
   chart.draw(data, options);
 }

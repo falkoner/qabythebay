@@ -4,24 +4,11 @@ require 'open-uri'
 
 module Sinatra
   module UserHelper
-    def UserHelper.addToFile
+    def addToFile
       puts "Adding"
       open("test.txt", 'a') do |i|
         i.puts Time.now.to_s + "\n"
       end
-    end
-
-    def UserHelper.get_db_connection
-      if ENV['MONGOHQ_URL'].nil?
-        db = Connection.new.db('qabase')
-      else
-        db_heroku = URI.parse(ENV['MONGOHQ_URL'])
-        database = db_heroku.path.gsub(/^\//, '')
-        db = Mongo::Connection.new(db_heroku.host, db_heroku.port).db(database)
-        db.authenticate(db_heroku.user, db_heroku.password) unless (db_heroku.user.nil? || db_heroku.password.nil?)
-      end
-
-      return db
     end
 
     class RssParser
@@ -35,16 +22,12 @@ module Sinatra
       end
 
       def process
-        begin
-          rss = SimpleRSS.parse open(@url)
-          rss.channel.items.each do |item|
-            if check(item.title)
-              save(item) if @db
-              @new_items.push :title => item.title, :link => item.link
-            end
+        rss = SimpleRSS.parse open(@url)
+        rss.channel.items.each do |item|
+          if check(item.title)
+            save(item) if @db
+            @new_items.push :title => item.title, :link => item.link
           end
-        rescue Exception => e
-          puts e.message
         end
       end
 
@@ -56,7 +39,6 @@ module Sinatra
       def save(item)
         item.delete(:dc_rights)
         item.delete(:dc_title)
-        item[:location] = getLocation(item)
         item[:date] = (item[:dc_date] + Time.zone_offset("PST")).strftime("%F")
         item = clean(item)
         unless @db.find(:link => item[:link]).first
@@ -78,19 +60,10 @@ module Sinatra
         string =~ keywords
       end
 
-      def getLocation(item)
-        location = nil
-        if item[:title].scan(/\([^)]*\)$/)
-          location = item[:title].scan(/\([^)]*\)$/)[0]
-          location.gsub!(/[()]/,'')
-        end
-        return location
-      end
-
       def clean(item)
         item.each do |k, v|
           if v.is_a?(String)
-            item[k].encode!("UTF-8", {:invalid => :replace, :undef => :replace, :replace => '?'})
+            item[k].encode!("UTF-8") if v.is_a?(String)
             #item[k] = v.scan(/[a-z\d :\/\,\.\+\#\&\-\)\(@]/i).join.strip if v.is_a?(String)
           end
         end

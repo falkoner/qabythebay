@@ -1,29 +1,41 @@
 require 'rufus-scheduler'
-require "sinatra"
-require "sinatra/reloader" if development?
+require 'sinatra'
 require 'yaml'
 require './helpers.rb'
 require 'mongo'
 require 'json'
+require "sinatra/reloader" if development?
 
 include Mongo
 include Sinatra::UserHelper
 
 # set up DB connection
-db = Sinatra::UserHelper.get_db_connection
+if ENV['VCAP_SERVICES'].nil?
+  db = Connection.new.db('qabase')
+else
+  host = JSON.parse(ENV['VCAP_SERVICES'])['mongodb 1.8'].first['credentials']['hostname'] rescue 'localhost'
+  port = JSON.parse( NV['VCAP_SERVICES'])['mongodb-1.8'].first['credentials']['port'] rescue 27017
+  database = JSON.parse( ENV['VCAP_SERVICES'] )['mongodb-1.8'].first['credentials']['db'] rescue 'qabase'
+  username = JSON.parse( ENV['VCAP_SERVICES'] )['mongodb-1.8'].first['credentials']['username'] rescue ''
+  password = JSON.parse( ENV['VCAP_SERVICES'] )['mongodb-1.8'].first['credentials']['password'] rescue ''
+  db = Connection.new(host, port).db(database)
+  db.authenticate(username, password)
+  #items = db.collection('items')
+end
 items = db.collection('items')
 counters = db.collection('counters')
 parser = Sinatra::UserHelper::RssParser.new(items, counters)
 
-# set up scheduler
-# scheduler = Rufus::Scheduler.new
+scheduler = Rufus::Scheduler.start_new
 
-# scheduler.every("10m") do
-#   puts Time.now.to_s + " Processing RSS"
-#   parser.process
-# end
+scheduler.every("5m") do
+  puts "Processing RSS"
+  parser.process
+end
 
 puts "We are starting"
+#puts Sinatra::UserHelper.methods.sort
+#puts Sinatra::UserHelper.respond_to?("addToFile")
 
 @@step = 10 # number of items per page
 
@@ -91,3 +103,14 @@ end
 error do
     "<p>Sorry, we got an error. Try again.</p>"
 end
+
+# get '/sys' do
+#   @db = db.inspect.split(',')
+#   erb :sys
+# end
+
+# get '/saved' do
+#   @items = items.find().sort( [["dc_date", -1]])
+#   erb :saved
+# end
+
